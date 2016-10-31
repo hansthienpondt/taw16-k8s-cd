@@ -1,5 +1,8 @@
 FROM microsoft/dotnet:1.0.0-preview1
 
+LABEL Name worker
+LABEL Version 0.1
+
 WORKDIR /app
 
 ADD src/ /app/src/
