@@ -6,7 +6,7 @@ stages:
 build-container:
   image: gitlab/dind
   stage: build
-  services:
-    - gitlab/dind
+  variables:
+    DOCKER_API_VERSION: 1.23
   script:
     - docker build worker/
