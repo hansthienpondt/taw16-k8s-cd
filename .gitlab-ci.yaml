@@ -1,0 +1,7 @@
+stages:
+  - build
+
+build-container:
+  stage: build
+  script:
+    - docker build worker/
