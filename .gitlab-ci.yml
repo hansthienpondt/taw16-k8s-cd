@@ -7,6 +7,6 @@ build-container:
   image: gitlab/dind
   stage: build
   services:
-    - docker:dind
+    - gitlab/dind
   script:
     - docker build worker/
