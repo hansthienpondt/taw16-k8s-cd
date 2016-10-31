@@ -1,11 +1,9 @@
-# image: gitlab/dind
-
 stages:
   - lint
   - build
 
 lint-file:
-  image: projectatomic/dockerfile-lint
+  image: willies/dockerfile_lint:a36b300_git.0
   stage: lint
   script:
     - dockerfile_lint -f worker/Dockerfile
