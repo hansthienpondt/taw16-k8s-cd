@@ -7,6 +7,6 @@ build-container:
   image: docker
   stage: build
   services:
-    - docker/dind
+    - docker:dind
   script:
     - docker build worker/
