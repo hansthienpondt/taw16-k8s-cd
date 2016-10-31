@@ -1,9 +1,12 @@
-image: gitlab/dind
+# image: gitlab/dind
 
 stages:
   - build
 
 build-container:
+  image: docker
   stage: build
+  services:
+    - docker/dind
   script:
     - docker build worker/
