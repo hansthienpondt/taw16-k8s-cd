@@ -1,37 +1,45 @@
 stages:
-  - test
-  - build
+  # - test
+  # - build
+  - deploy
 
-lint-worker-dockerfile:
-  image: willies/dockerfile_lint:a36b300_git.0
-  stage: test
+### testing section
+# lint-worker-dockerfile:
+#   image: willies/dockerfile_lint:a36b300_git.0
+#   stage: test
+#   script:
+#     - dockerfile_lint -f worker/Dockerfile
+#
+# lint-result-dockerfile:
+#   image: willies/dockerfile_lint:a36b300_git.0
+#   stage: test
+#   script:
+#     - dockerfile_lint -f result/Dockerfile
+#
+# ### building section
+# build-worker-container:
+#   image: gitlab/dind
+#   stage: build
+#   variables:
+#     DOCKER_API_VERSION: "1.23"
+#   script:
+#     - docker build worker/
+#
+# build-result-container:
+#   image: gitlab/dind
+#   stage: build
+#   variables:
+#     DOCKER_API_VERSION: "1.23"
+#   script:
+#     - docker build -t willies/example-voting-app-result result/
+#     - docker push willies/example-voting-app-result
+
+### deploy section
+deploy-result-container:
+  image: willies/kubectl:1.4.5
+  stage: deploy
+  environment: dev
   script:
-    - dockerfile_lint -f worker/Dockerfile
-
-lint-result-dockerfile:
-  image: willies/dockerfile_lint:a36b300_git.0
-  stage: test
-  script:
-    - dockerfile_lint -f result/Dockerfile
-
-
-build-worker-container:
-  image: gitlab/dind
-  stage: build
-  variables:
-    DOCKER_API_VERSION: "1.23"
-  script:
-    - docker build worker/
-
-build-result-container:
-  image: gitlab/dind
-  stage: build
-  variables:
-    DOCKER_API_VERSION: "1.23"
-  script:
-    - ls -lah /root
-    - cat /root/.docker/config.json
-    - whoami
-    - sleep 120s
-    - docker build -t willies/example-voting-app-result result/
-    - docker push willies/example-voting-app-result
+    - kubectl get pods --all-namespaces
+    - kubectl delete pod -l app=postgres
+    - kubectl delete pod -l app=result-app
