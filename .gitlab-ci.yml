@@ -29,9 +29,10 @@ build-result-container:
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
-    - ls -lah /
+    - ls -lah /root
+    - cat /root/.docker/config.json
     - ls -lah /home/gitlab-runner/
-    - pwd
+    - whoami
     - sleep 120s
     - docker build -t willies/example-voting-app-result result/
     - docker push willies/example-voting-app-result
