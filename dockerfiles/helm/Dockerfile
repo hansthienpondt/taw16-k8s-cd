@@ -10,6 +10,6 @@ ADD bin/helm-2.0.0-beta.2 /usr/bin/helm
 RUN chmod a+x /usr/bin/helm
 
 RUN apk update && \
-apk add --no-cache bash git
+apk add --no-cache bash git util-linux
 
 ENTRYPOINT ["/usr/bin/helm"]
