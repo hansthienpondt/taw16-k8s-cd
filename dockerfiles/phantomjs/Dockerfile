@@ -1,6 +1,9 @@
-FROM willies/kubectl:latest
+FROM node:6
 
-RUN apk update && \
-    apk add --no-cache nodejs curl
+ADD bin/kubectl-1.4.5 /usr/bin/kubectl
+RUN chmod a+x /usr/bin/kubectl
 
-RUN npm install -g phantomjs-prebuilt
+ADD bin/helm-2.0.0-beta.2 /usr/bin/helm
+RUN chmod a+x /usr/bin/helm
+
+RUN npm install -g phantomjs

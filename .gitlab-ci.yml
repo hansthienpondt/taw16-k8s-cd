@@ -46,7 +46,7 @@ deploy-result-container-to-dev:
 
 ### integration test
 integration-test:
-  image: willies/phantomjs:3
+  image: willies/phantomjs:4
   stage: int-test
   script:
     - export NS_UUID=$(uuidgen |cut -f1 -d-)
@@ -57,7 +57,7 @@ integration-test:
     - helm install --namespace=$NS_UUID charts/example-voting-app/charts/result-app --set imageTag=${CI_BUILD_REF:0:8}
     - while ! curl -s -o /dev/null http://voting-app.$NS_UUID.svc; do echo "waiting for voting-app" && sleep 5; done
     - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
-    - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc
+    - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
     - sleep 5s
     - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep -q '1 vote'; then exit 1
     - kubectl delete ns $NS_UUID
