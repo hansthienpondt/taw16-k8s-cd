@@ -1,7 +1,8 @@
 stages:
   - test
   - build
-  - deploy
+  - deploy-dev
+  - int-test
 
 ### testing section
 # lint-worker-dockerfile:
@@ -34,10 +35,23 @@ build-result-container:
     - docker build -t willies/example-voting-app-result:${CI_BUILD_REF:0:8} example-voting-app/result/
     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
 
-### deploy section
-deploy-result-container:
+### deploy to dev
+deploy-result-container-to-dev:
   image: willies/helm:2.0.0-beta.2
-  stage: deploy
+  stage: deploy-dev
   environment: dev
   script:
     - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
+
+### integration test
+integration-test:
+  image: willies/helm:2.0.0-beta.2-1
+  stage: int-test
+  script:
+    - export NS_UUID=$(uuidgen |cut -f1 -d-)
+    - helm install --namespace=$NS_UUID charts/example-voting-app/charts/postgres
+    - helm install --namespace=$NS_UUID charts/example-voting-app/charts/redis
+    - helm install --namespace=$NS_UUID charts/example-voting-app/charts/worker
+    - helm install --namespace=$NS_UUID charts/example-voting-app/charts/voting-app
+    - helm install --namespace=$NS_UUID charts/example-voting-app/charts/result-app
+    - sleep 50s
