@@ -11,17 +11,13 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: {{default 80 .Values.httpPort}}
-    nodePort: 30080
-    targetPort: http
-    protocol: TCP
-    name: http
-  - port: 30080
+  - port: 80
+    nodePort: {{ .Values.env_vars.GITLAB_PORT }}
     targetPort: http
     protocol: TCP
     name: http
   - name: ssh
-    nodePort: 30022
+    nodePort: {{ .Values.env_vars.GITLAB_SSH_PORT }}
     port: 22
     protocol: TCP
     targetPort: ssh
