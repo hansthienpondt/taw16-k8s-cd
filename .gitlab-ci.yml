@@ -58,5 +58,5 @@ integration-test:
     - while ! curl -s -o /dev/null http://voting-app; do echo "waiting for voting-app && sleep 5; done
     - curl -sS -X POST --data "vote=b" http://voting-app
     - sleep 5s
-    - if ! phantomjs render.js http://result-app | grep -q '1 vote'; then exit 1
+    - if ! phantomjs example-voting-app/result/tests/render.js http://result-app | grep -q '1 vote'; then exit 1
     - kubectl delete ns $NS_UUID
