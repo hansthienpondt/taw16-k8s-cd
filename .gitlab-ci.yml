@@ -36,10 +36,11 @@ stages:
 
 ### deploy section
 deploy-result-container:
-  image: willies/kubectl:1.4.5
+  image: willies/kubectl:1.4.5-1
   stage: deploy
   environment: dev
   script:
     - kubectl get pods --all-namespaces
     - kubectl delete pod -l app=postgres
     - kubectl delete pod -l app=result-app
+    - sleep 180s
