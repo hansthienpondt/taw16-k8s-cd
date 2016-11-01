@@ -1,3 +1,7 @@
+
+## requirements
+needs docker-creds if you want to push to docker hub
+
 minikube start --memory=4096 --vm-driver=xhyve
 
 helm init
