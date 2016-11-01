@@ -40,6 +40,4 @@ deploy-result-container:
   stage: deploy
   environment: dev
   script:
-    - kubectl set image deployment/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-    - helm ls
-    - sleep 180s
+    - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set imageTag=${CI_BUILD_REF:0:8}
