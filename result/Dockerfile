@@ -1,5 +1,8 @@
 FROM node:5.11.0-slim
 
+LABEL Name result
+LABEL Version 0.1
+
 WORKDIR /app
 
 RUN npm install -g nodemon
