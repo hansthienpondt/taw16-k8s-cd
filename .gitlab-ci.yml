@@ -36,7 +36,7 @@ build-result-container:
 
 ### deploy section
 deploy-result-container:
-  image: willies/kubectl:1.4.5-2
+  image: willies/helm:2.0.0-beta.2
   stage: deploy
   environment: dev
   script:
