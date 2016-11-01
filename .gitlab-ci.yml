@@ -1,17 +1,32 @@
 stages:
-  - lint
+  - test
   - build
 
-lint-file:
+lint-worker-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
-  stage: lint
+  stage: test
   script:
     - dockerfile_lint -f worker/Dockerfile
 
-build-container:
+lint-result-dockerfile:
+  image: willies/dockerfile_lint:a36b300_git.0
+  stage: test
+  script:
+    - dockerfile_lint -f result/Dockerfile
+
+
+build-worker-container:
   image: gitlab/dind
   stage: build
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
     - docker build worker/
+
+build-result-container:
+  image: gitlab/dind
+  stage: build
+  variables:
+    DOCKER_API_VERSION: "1.23"
+  script:
+    - docker build result/
