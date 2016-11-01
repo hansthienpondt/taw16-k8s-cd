@@ -1,6 +1,9 @@
 # Using official python runtime base image
 FROM python:2.7-alpine
 
+LABEL Name vote
+LABEL Version 0.1
+
 # Set the application directory
 WORKDIR /app
 
