@@ -1,0 +1,31 @@
+# Default values for gitlab.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+image: sameersbn/gitlab
+imageTag: 8.13.1
+
+env_vars:
+  GITLAB_SECRETS_DB_KEY_BASE: 123123123123
+  GITLAB_HOST: gitlab.infra.svc.cluster.local
+  GITLAB_PORT: 30080
+  GITLAB_SSH_PORT: 22
+  GITLAB_NOTIFY_ON_BROKEN_BUILDS: "false"
+  GITLAB_NOTIFY_PUSHER: "false"
+  GITLAB_INCOMING_EMAIL_ADDRESS: reply@example.com
+  GITLAB_BACKUP_SCHEDULE: daily
+  GITLAB_BACKUP_TIME: "01:00"
+  DB_TYPE: postgres
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_NAME: gitlab_production
+  DB_USER: gitlab
+  DB_PASS: gitlab
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  SMTP_ENABLED: false
+  IMAP_ENABLED: false
+  GITLAB_HTTPS: false
+  GITLAB_SECRETS_SECRET_KEY_BASE: "asdfasdfasdf"
+  GITLAB_SECRETS_OTP_KEY_BASE: "asdfasdfasdf"
+  GITLAB_ROOT_PASSWORD: passw0rd

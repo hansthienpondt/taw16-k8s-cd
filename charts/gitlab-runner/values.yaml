@@ -1,0 +1,17 @@
+# Default values for gitlab-runner.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+
+image: willies/gitlab-runner:1.7.1_kube.3
+
+# not the registration token, but the result from the registration
+token: 067ee3cf75b73d8d1b3b07ca2c996e
+
+# doesn't quite work yet, register the runner manually
+# gitlab-ci-multi-runner register
+# env_vars:
+#   CI_SERVER_URL: http://gitlab
+#   RUNNER_NAME: gitlab-runner-k8s
+#   REGISTRATION_TOKEN: aPjfUPJz9ac47dAXw4Dx
+#   REGISTER_NON_INTERACTIVE: true
