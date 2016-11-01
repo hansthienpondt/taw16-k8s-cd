@@ -40,4 +40,4 @@ deploy-result-container:
   stage: deploy
   environment: dev
   script:
-    - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
