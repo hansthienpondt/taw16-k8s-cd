@@ -4,4 +4,4 @@
 # name: value
 image: willies/example-voting-app-vote
 imageTag: latest
-nodePort: 30050
+# nodePort: 30050

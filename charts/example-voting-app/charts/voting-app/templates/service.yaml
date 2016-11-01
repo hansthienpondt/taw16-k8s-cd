@@ -9,12 +9,16 @@ metadata:
     release: {{ .Release.Name | quote }}
     chart: "{{.Chart.Name}}-{{.Chart.Version}}"
 spec:
+  {{ if .Values.nodePort -}}
   type: NodePort
+  {{ end -}}
   ports:
   - port: 80
     targetPort: http
     protocol: TCP
     name: http
+    {{ if .Values.nodePort -}}
     nodePort: {{ .Values.nodePort }}
+    {{end -}}
   selector:
     app: voting-app
