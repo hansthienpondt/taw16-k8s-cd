@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: voting-app
-        image: {{ .Values.image }}
+        image: {{ .Values.image }}:{{ .Values.imageTag }}
         imagePullPolicy: {{default "IfNotPresent" .Values.pullPolicy}}
         ports:
         - containerPort: 80
