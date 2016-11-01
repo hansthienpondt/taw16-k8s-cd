@@ -19,6 +19,6 @@ spec:
     name: http
     {{ if .Values.nodePort -}}
     nodePort: {{ .Values.nodePort }}
-    {{end -}}
+    {{ end }}
   selector:
     app: result-app
