@@ -31,7 +31,6 @@ build-result-container:
   script:
     - ls -lah /root
     - cat /root/.docker/config.json
-    - ls -lah /home/gitlab-runner/
     - whoami
     - sleep 120s
     - docker build -t willies/example-voting-app-result result/
