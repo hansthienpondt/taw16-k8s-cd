@@ -14,7 +14,7 @@ lint-result-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
   stage: test
   script:
-    - dockerfile_lint -f result/Dockerfile
+    - dockerfile_lint -f example-voting-app/result/Dockerfile
 
 # ### building section
 # build-worker-container:
@@ -31,7 +31,7 @@ build-result-container:
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
-    - docker build -t willies/example-voting-app-result:${CI_BUILD_REF:0:8} result/
+    - docker build -t willies/example-voting-app-result:${CI_BUILD_REF:0:8} example-voting-app/result/
     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
 
 ### deploy section
