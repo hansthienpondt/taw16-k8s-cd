@@ -54,8 +54,9 @@ integration-test:
     - while ! curl -s -o /dev/null http://voting-app.$NS_UUID.svc; do echo "waiting for voting-app" && sleep 5; done
     - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
     - while ! pg_isready -h db.$NS_UUID.svc; do echo "waiting for postgres" && sleep 5; done
-    - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
     - sleep 5s
+    - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
+    - sleep 10s
     - phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc
     - sleep 180s
     - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep -q '1 vote'; then exit 1; fi
