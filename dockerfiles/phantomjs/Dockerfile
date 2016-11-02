@@ -9,5 +9,5 @@ RUN chmod a+x /usr/bin/helm
 RUN npm install -g phantomjs
 
 RUN apt-get update && \
-    apt-get install -y uuid-runtime && \
+    apt-get install -y uuid-runtime postgresql-client && \
     rm -rf /var/lib/apt/lists/*
