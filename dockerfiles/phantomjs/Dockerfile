@@ -7,3 +7,7 @@ ADD bin/helm-2.0.0-beta.2 /usr/bin/helm
 RUN chmod a+x /usr/bin/helm
 
 RUN npm install -g phantomjs
+
+RUN apt-get update && \
+    apt-get install -y uuid-runtime && \
+    rm -rf /var/lib/apt/lists/*

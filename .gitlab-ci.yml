@@ -46,7 +46,7 @@ deploy-result-container-to-dev:
 
 ### integration test
 integration-test:
-  image: willies/phantomjs:4
+  image: willies/phantomjs:5
   stage: int-test
   script:
     - export NS_UUID=$(uuidgen |cut -f1 -d-)
