@@ -48,7 +48,7 @@ deploy-result-container-to-dev:
   stage: deploy-dev
   environment: dev
   script:
-    - helm upgrade vote-app charts/example-voting-app/charts/voting-app -i --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade voting-app charts/example-voting-app/charts/voting-app -i --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
     - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
 
 ### integration test
@@ -78,7 +78,7 @@ deploy-result-container-to-uat:
   stage: deploy-uat
   environment: uat
   script:
-    - helm upgrade vote-app-uat charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade voting-app-uat charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
     - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
 
 ### deploy to prod
@@ -88,5 +88,5 @@ deploy-result-container-to-prod:
   environment: prod
   when: manual
   script:
-    - helm upgrade vote-app-prod charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
-    - helm upgrade result-appprod charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade voting-app-prod charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade result-app-prod charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
