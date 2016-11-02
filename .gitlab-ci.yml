@@ -73,7 +73,7 @@ e2e-test:
     - kubectl delete ns $NS_UUID
 
 ### deploy to uat
-deploy-result-container-to-dev:
+deploy-result-container-to-uat:
   image: willies/helm:2.0.0-beta.2
   stage: deploy-uat
   environment: uat
@@ -82,7 +82,7 @@ deploy-result-container-to-dev:
     - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
 
 ### deploy to prod
-deploy-result-container-to-dev:
+deploy-result-container-to-prod:
   image: willies/helm:2.0.0-beta.2
   stage: deploy-prod
   environment: prod
