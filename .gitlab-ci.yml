@@ -1,31 +1,35 @@
 stages:
-  - test
+  - unit-test
   - build
   - deploy-dev
-  - int-test
+  - e2e-test
+  - deploy-uat
+  - deploy-prod
 
 ## testing section
-lint-worker-dockerfile:
+lint-voting-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
-  stage: test
+  stage: unit-test
   script:
     - dockerfile_lint -f example-voting-app/vote//Dockerfile
 
 lint-result-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
-  stage: test
+  stage: unit-test
   script:
     - dockerfile_lint -f example-voting-app/result/Dockerfile
 
 ### building section
-build-worker-container:
+build-voting-container:
   image: gitlab/dind
   stage: build
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
-    - docker build -t willies/example-voting-app-vote:${CI_BUILD_REF:0:8} example-voting-app/vote/
+    - docker build -t willies/example-voting-app-vote:latest example-voting-app/vote/
+    - docker tag willies/example-voting-app-vote:latest willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
     - docker push willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-vote:latest
 
 build-result-container:
   image: gitlab/dind
@@ -33,8 +37,10 @@ build-result-container:
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
-    - docker build -t willies/example-voting-app-result:${CI_BUILD_REF:0:8} example-voting-app/result/
+    - docker build -t willies/example-voting-app-result:latest example-voting-app/result/
+    - docker tag willies/example-voting-app-result:latest willies/example-voting-app-result:${CI_BUILD_REF:0:8}
     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-result:latest
 
 ### deploy to dev
 deploy-result-container-to-dev:
@@ -42,6 +48,7 @@ deploy-result-container-to-dev:
   stage: deploy-dev
   environment: dev
   script:
+    - helm upgrade vote-app charts/example-voting-app/charts/vote-app -i --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
     - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
 
 ### integration test
@@ -50,9 +57,9 @@ deploy-result-container-to-dev:
 # wait until everything is ready
 # run test & check result
 # delete namespace (includes apps)
-integration-test:
+e2e-test:
   image: willies/phantomjs:6
-  stage: int-test
+  stage: e2e-test
   script:
     - export NS_UUID=$(uuidgen | cut -f1 -d-)
     - helm install --namespace=$NS_UUID charts/example-voting-app/ --set voting-app.imageTag=${CI_BUILD_REF:0:8},result-app.imageTag=${CI_BUILD_REF:0:8}
@@ -64,3 +71,22 @@ integration-test:
     - sleep 5s
     - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep -q '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
     - kubectl delete ns $NS_UUID
+
+### deploy to uat
+deploy-result-container-to-dev:
+  image: willies/helm:2.0.0-beta.2
+  stage: deploy-uat
+  environment: uat
+  script:
+    - helm upgrade vote-app-uat charts/example-voting-app/charts/vote-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
+
+### deploy to prod
+deploy-result-container-to-dev:
+  image: willies/helm:2.0.0-beta.2
+  stage: deploy-prod
+  environment: prod
+  when: manual
+  script:
+    - helm upgrade vote-app-prod charts/example-voting-app/charts/vote-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade result-appprod charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}

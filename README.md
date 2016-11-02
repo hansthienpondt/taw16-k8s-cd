@@ -79,3 +79,12 @@ cd -
 docker build -t willies/kubectl:1.4.5-2 .
 docker push willies/kubectl:1.4.5-2
 ```
+
+## provision uat
+```
+helm install --namespace=uat --name postgres-uat charts/example-voting-app/charts/postgres
+helm install --namespace=uat --name redis-uat charts/example-voting-app/charts/redis
+helm install --namespace=uat --name worker-uat charts/example-voting-app/charts/worker
+helm install --namespace=uat --name voting-app-uat charts/example-voting-app/charts/voting-app --set nodePort=30060
+helm install --namespace=uat --name result-app-uat charts/example-voting-app/charts/result-app --set nodePort=30061
+```
