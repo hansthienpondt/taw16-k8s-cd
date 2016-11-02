@@ -1,6 +1,6 @@
 stages:
   - unit-test
-  - build
+  - build-push
   - deploy-dev
   - e2e-test
   - deploy-uat
@@ -34,7 +34,7 @@ lint-result-chart:
 ### building section
 build-voting-container:
   image: gitlab/dind
-  stage: build
+  stage: build-push
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
@@ -45,7 +45,7 @@ build-voting-container:
 
 build-result-container:
   image: gitlab/dind
-  stage: build
+  stage: build-push
   variables:
     DOCKER_API_VERSION: "1.23"
   script:
