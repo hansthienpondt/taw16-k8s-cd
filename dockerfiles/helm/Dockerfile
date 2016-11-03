@@ -6,7 +6,7 @@ FROM alpine:3.4
 #     mv linux-amd64/helm /usr/bin/helm && \
 #     chmod a+x /usr/bin/helm && \
 #     rm -rf linux-amd64
-ADD bin/helm-2.0.0-beta.2 /usr/bin/helm
+ADD bin/helm-2.0.0-rc.1 /usr/bin/helm
 RUN chmod a+x /usr/bin/helm
 
 RUN apk update && \

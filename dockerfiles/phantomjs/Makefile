@@ -1,6 +1,6 @@
 .PHONY: build push
 
-TAG=6
+TAG=7
 
 build:
 	docker build -t willies/phantomjs:latest .

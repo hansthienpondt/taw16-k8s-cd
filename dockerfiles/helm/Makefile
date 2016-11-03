@@ -1,11 +1,11 @@
 .PHONY: build push
 
-TAG=1
+TAG=2.0.0-rc.1
 
 build:
 	docker build -t willies/helm:latest .
-	docker tag willies/helm:latest willies/helm:2.0.0-beta.2-$(TAG)
+	docker tag willies/helm:latest willies/helm:$(TAG)
 
 push: build
 	docker push willies/helm:latest
-	docker push willies/helm:2.0.0-beta.2-$(TAG)
+	docker push willies/helm:$(TAG)
