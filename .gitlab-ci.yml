@@ -20,13 +20,13 @@ lint-result-dockerfile:
     - dockerfile_lint -f example-voting-app/result/Dockerfile
 
 lint-voting-chart:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/helm:2.0.0-rc.1
   stage: unit-test
   script:
     - helm lint charts/example-voting-app/charts/voting-app
 
 lint-result-chart:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/helm:2.0.0-rc.1
   stage: unit-test
   script:
     - helm lint charts/example-voting-app/charts/result-app
@@ -56,21 +56,21 @@ build-result-container:
 
 ### deploy to dev
 deploy-to-dev:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/helm:2.0.0-rc.1
   stage: deploy-dev
   environment: dev
   script:
-    - helm upgrade voting-app charts/example-voting-app/charts/voting-app -i --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
-    - helm upgrade result-app charts/example-voting-app/charts/result-app -i --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
 
-### integration test
+### e2e test
 # generate unique namespace
 # deploy application stack into it
 # wait until everything is ready (it's still racy)
 # run test & check result
 # delete namespace (includes app-stack)
 e2e-test:
-  image: willies/phantomjs:6
+  image: willies/phantomjs:7
   stage: e2e-test
   script:
     - export NS_UUID=$(uuidgen | cut -f1 -d-)
@@ -86,7 +86,7 @@ e2e-test:
 
 ### deploy to uat
 deploy-to-uat:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/helm:2.0.0-rc.1
   stage: deploy-uat
   environment: uat
   script:
@@ -95,7 +95,7 @@ deploy-to-uat:
 
 ### deploy to prod
 deploy-to-prod:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/helm:2.0.0-rc.1
   stage: deploy-prod
   environment: prod
   when: manual
