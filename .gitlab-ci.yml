@@ -60,6 +60,7 @@ deploy-to-dev:
   stage: deploy-dev
   environment: dev
   script:
+    - sleep 300s
     - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
     - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
 
