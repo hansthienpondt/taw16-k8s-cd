@@ -1,4 +1,9 @@
 
+# Overview
+I took the docker example-voting-app and added some kubernetes, helm and gitlab love.
+
+Helm is used to install the example-voting-app into different Kubernetes namespaces (== environments).
+
 ## requirements
 - minikube
 - kubectl
@@ -11,41 +16,38 @@ minikube start --memory=4096 --vm-driver=xhyve
 ```
 After a while you should be able to visit the dashboard. Check with `minikube service list`
 
-Initialize helm, the swiss knife of kubernetes application deployment
+Initialize helm, the swiss knife of kubernetes application deployment:
 ```
 helm init
 ```
-Helm installs `tiller` in the cluster, its server-side component. Check with `kubectl get pods --all-namespaces` and `helm version`
+Helm installs its server-side component `tiller` in the cluster. Check with `kubectl get pods --all-namespaces` and `helm version`.
 
 ### Install example-voting-app
 Now we can install the example-voting-app components:
 ```
-helm install --name postgres charts/example-voting-app/charts/postgres
-helm install --name redis charts/example-voting-app/charts/redis
-helm install --name worker charts/example-voting-app/charts/worker
-helm install --name voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050
-helm install --name result-app charts/example-voting-app/charts/result-app --set nodePort=30051
+helm install --namespace=dev --name postgres charts/example-voting-app/charts/postgres
+helm install --namespace=dev --name redis charts/example-voting-app/charts/redis
+helm install --namespace=dev --name worker charts/example-voting-app/charts/worker
+helm install --namespace=dev --name voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050
+helm install --namespace=dev --name result-app charts/example-voting-app/charts/result-app --set nodePort=30051
 ```
 Did everything went well? Check with `helm ls` and `minikube service list`.
-Now you should be able to access the app at ports 30050 and 30051!
+You should be able to access the app at port 30050 and 30051!
 
 ### Install gitlab
-Let's install gitlab but let's check the values in `charts/gitlab/values.yaml` first
+Let's install gitlab but check the values in `charts/gitlab/values.yaml` first, here's where you want to customize things.
 ```
-helm install --namespace=infra -n gitlab charts/gitlab
+helm install --namespace=infra --name pg-gitlab charts/gitlab/postgres
+helm install --namespace=infra --name redis-gitlab charts/gitlab/redis
+helm install --namespace=infra --name gitlab charts/gitlab/gitlab
 ```
 After a while you can access gitlab at `http://$(minikube ip):30080`. Default user/pass is root/passw0rd.
 
-Got to `http://$(minikube ip):30080/admin/runners` and copy the registration token. Then register the gitlab-runner manually, because that's just the way it is for now:
+Got to `http://$(minikube ip):30080/admin/runners` and copy the registration token. Then register the gitlab-runner manually, because that's just the way it is:
 ```
-kubectl run --namespace=infra -i -t gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never --command bash
-bash-4.3# gitlab-runner register -n --executor kubernetes -u http://gitlab/ -r C5HaFvoVkqJULxaskWu8
-bash-4.3# grep token /etc/gitlab-runner/config.toml
-  token = "33231c882cf2545e3124a823dee982"
+kubectl run --namespace=infra gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never -- register -n --executor kubernetes -u http://gitlab:30080/ -r p2ds1dyigYJfS7J2-esA
 ```
-See also notes at [1]
-
-Paste the token in `charts/gitlab-runner/values.yaml` and install the (long-running) gitlab-runner:
+Go back to admin console, grap the token for the runner and paste it in `charts/gitlab-runner/values.yaml`. Then install the (long-running) gitlab-runner:
 ```
 helm install --namespace=infra -n gitlab-runner charts/gitlab-runner
 ```
@@ -58,7 +60,13 @@ git push -u local master
 ```
 
 ## Notes
-[1] A better way would be to run `kubectl run --namespace=infra gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never -- register -n --executor kubernetes -u http://gitlab/ -r C5HaFvoVkqJULxaskWu8` but unfortunately that doesn't print the runtime token we need, you have to go to the gitlab webinterface to get it
+[1] Or do
+```
+kubectl run --namespace=infra -i -t gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never --command bash
+bash-4.3# gitlab-runner register -n --executor kubernetes -u http://gitlab/ -r C5HaFvoVkqJULxaskWu8
+bash-4.3# grep token /etc/gitlab-runner/config.toml
+  token = "33231c882cf2545e3124a823dee982"
+```
 
 ## build gitlab-runner
 ```
