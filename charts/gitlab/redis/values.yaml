@@ -6,5 +6,3 @@ cpu_limit: 100m
 imagePullPolicy: IfNotPresent
 mem_limit: 256Mi
 mem_request: 64Mi
-
-
