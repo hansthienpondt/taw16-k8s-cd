@@ -20,13 +20,13 @@ lint-result-dockerfile:
     - dockerfile_lint -f example-voting-app/result/Dockerfile
 
 lint-voting-chart:
-  image: willies/helm:2.0.0-rc.1
+  image: willies/helm:2.0.0-beta.2
   stage: unit-test
   script:
     - helm lint charts/example-voting-app/charts/voting-app
 
 lint-result-chart:
-  image: willies/helm:2.0.0-rc.1
+  image: willies/helm:2.0.0-beta.2
   stage: unit-test
   script:
     - helm lint charts/example-voting-app/charts/result-app
@@ -56,7 +56,7 @@ build-result-container:
 
 ### deploy to dev
 deploy-to-dev:
-  image: willies/helm:2.0.0-rc.1
+  image: willies/helm:2.0.0-beta.2
   stage: deploy-dev
   environment: dev
   script:
@@ -87,7 +87,7 @@ e2e-test:
 
 ### deploy to uat
 deploy-to-uat:
-  image: willies/helm:2.0.0-rc.1
+  image: willies/helm:2.0.0-beta.2
   stage: deploy-uat
   environment: uat
   script:
@@ -96,7 +96,7 @@ deploy-to-uat:
 
 ### deploy to prod
 deploy-to-prod:
-  image: willies/helm:2.0.0-rc.1
+  image: willies/helm:2.0.0-beta.2
   stage: deploy-prod
   environment: prod
   when: manual
