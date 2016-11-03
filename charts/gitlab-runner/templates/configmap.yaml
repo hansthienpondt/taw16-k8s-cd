@@ -11,7 +11,7 @@ data:
     concurrent = 4
     [[runners]]
       name = "Kubernetes Runner"
-      url = "http://gitlab/ci"
+      url = "http://gitlab:30080/ci"
       token = {{.Values.token | quote }}
       executor = "kubernetes"
       [runners.kubernetes]
