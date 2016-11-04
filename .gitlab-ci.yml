@@ -102,5 +102,5 @@ deploy-to-prod:
   variables:
     KUBECONFIG: "/root/.kube/config-aws"
   script:
-    - kubectl set image deployments/voting-app voting-app=${CI_BUILD_REF:0:8}
-    - kubectl set image deployments/result-app result-app=${CI_BUILD_REF:0:8}
+    - kubectl set image deployments/voting-app voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - kubectl set image deployments/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
