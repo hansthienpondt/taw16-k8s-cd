@@ -95,7 +95,7 @@ e2e-test:
 
 ### deploy to prod
 deploy-to-prod:
-  image: willies/helm:2.0.0-beta.2
+  image: willies/kubectl:1.4.5-5
   stage: deploy-prod
   environment: prod
   when: manual
