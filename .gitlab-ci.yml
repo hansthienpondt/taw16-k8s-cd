@@ -54,6 +54,17 @@ build-result-container:
     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
     - docker push willies/example-voting-app-result:latest
 
+build-worker-container:
+  image: gitlab/dind
+  stage: build-push
+  variables:
+    DOCKER_API_VERSION: "1.23"
+  script:
+    - docker build -t willies/example-voting-app-worker:latest example-voting-app/worker/
+    - docker tag willies/example-voting-app-worker:latest willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-worker:latest
+
 ### deploy to dev
 deploy-to-dev:
   image: willies/helm:2.0.0-beta.2
@@ -104,3 +115,4 @@ deploy-to-prod:
   script:
     - kubectl set image deployments/voting-app voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
     - kubectl set image deployments/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+    - kubectl set image deployments/worker worker=willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
