@@ -70,7 +70,7 @@ deploy-to-dev:
 # run test & check result
 # delete namespace (includes app-stack)
 e2e-test:
-  image: willies/phantomjs:7
+  image: willies/phantomjs:6
   stage: e2e-test
   script:
     - export NS_UUID=$(uuidgen | cut -f1 -d-)
