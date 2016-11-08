@@ -23,7 +23,7 @@ Helm is used to install the example-voting-app into different Kubernetes namespa
 Start minikube
 
 ```
-minikube start --memory=4096 --vm-driver=xhyve
+minikube start --memory=4096
 ```
 After a while you should be able to visit the dashboard. Check with `minikube service list`
 
@@ -79,12 +79,12 @@ bash-4.3# grep token /etc/gitlab-runner/config.toml
   token = "33231c882cf2545e3124a823dee982"
 ```
 
-## run canary deployment
+### run canary deployment
 ```
 kubectl run voting-app-beta --image=willies/example-voting-app-vote -l app=voting-app,release=canary
 
 ```
-## provision uat
+### provision uat
 ```
 helm install --namespace=uat --name postgres-uat charts/example-voting-app/charts/postgres
 helm install --namespace=uat --name redis-uat charts/example-voting-app/charts/redis
@@ -92,8 +92,8 @@ helm install --namespace=uat --name worker-uat charts/example-voting-app/charts/
 helm install --namespace=uat --name voting-app-uat charts/example-voting-app/charts/voting-app --set nodePort=30060
 helm install --namespace=uat --name result-app-uat charts/example-voting-app/charts/result-app --set nodePort=30061
 ```
-## build gitlab-runner
-I hacked in support to use `/var/run/docker.sock` from the host and two secretes `docker-cred` and `kube-cred` to store the credentials to dockerhub and production k8s cluster. Source is available here:
+### build gitlab-runner
+I hacked in support to use `/var/run/docker.sock` from the host and two secretes `docker-cred` and `kube-cred` to store the credentials to dockerhub and production k8s cluster. Source is available here: [janwillies/gitlab-runner](https://github.com/janwillies/gitlab-runner)
 ```
 make build BUILD_PLATFORMS="-os=linux -arch=amd64"
 ```
@@ -107,7 +107,7 @@ docker push willies/gitlab-runner:1.7.1_kube.3
 cd -
 ```
 
-## docker on mac issues
+### docker on mac issues
 if you have trouble starting minikube, try to rerun instructions from [docker-machine-driver-xhyve](https://github.com/zchee/docker-machine-driver-xhyve#install)
 
 ```
