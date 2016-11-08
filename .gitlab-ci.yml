@@ -3,7 +3,7 @@ stages:
   - build-push
   - deploy-dev
   - e2e-test
-  - deploy-uat
+  - deploy-canary
   - deploy-prod
 
 ## testing section
@@ -92,7 +92,7 @@ e2e-test:
     - sleep 8s
     - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
     - sleep 8s
-    - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep -q '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
+    - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
     - kubectl delete ns $NS_UUID
 
 ### deploy to uat
@@ -104,8 +104,19 @@ e2e-test:
 #     - helm upgrade voting-app-uat charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
 #     - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
 
+### canary deploy to prod
+deploy canary production:
+  image: willies/kubectl:1.4.5-5
+  stage: deploy-canary
+  environment: prod
+  variables:
+    KUBECONFIG: "/root/.kube/config-aws"
+  script:
+    - kubectl set image deployments/voting-app-beta voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - kubectl scale --replicas 1 deployment voting-app-beta
+
 ### deploy to prod
-deploy-to-prod:
+deploy to production:
   image: willies/kubectl:1.4.5-5
   stage: deploy-prod
   environment: prod
