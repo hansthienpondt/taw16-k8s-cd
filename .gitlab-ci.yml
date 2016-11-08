@@ -91,7 +91,8 @@ e2e-test:
     - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
     - sleep 8s
     - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
-    - sleep 8s
+    - sleep 12s
+    - phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc
     - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
     - kubectl delete ns $NS_UUID
 
@@ -126,4 +127,4 @@ deploy to production:
   script:
     - kubectl set image deployments/voting-app voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
     - kubectl set image deployments/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-    - kubectl set image deployments/worker worker=willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
+    - kubectl scale --replicas 0 deployment voting-app-beta
