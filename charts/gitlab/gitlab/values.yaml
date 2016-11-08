@@ -3,7 +3,7 @@
 # Declare name/value pairs to be passed into your templates.
 # name: value
 image: sameersbn/gitlab
-imageTag: 8.13.1
+imageTag: 8.13.3
 
 env_vars:
   GITLAB_SECRETS_DB_KEY_BASE: 123123123123
