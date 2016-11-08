@@ -4,13 +4,17 @@ I took the docker example-voting-app and added some kubernetes, helm and gitlab 
 
 The example-voting-app will go through a CI/CD pipeline which is implemented with gitlab-ci autoscaled builders. It will run parallel linting tests, build and push the docker containers, deploy to development environment- then run end-2-end tests with phantomjs. If that succeeds the pipeline will automatically deploy a canary version to a production cluster on AWS. In the end the user is left with a manual step to fully deploy to production.
 
+![infra structure](https://raw.githubusercontent.com/janwillies/taw16-k8s-cd/taw16/infra.png)
+
 The pipeline looks like this:
+
+![](https://raw.githubusercontent.com/janwillies/taw16-k8s-cd/taw16/pipeline.png)
 
 Take a look at `.gitlab-ci.yaml` on how stages are defined.
 
 Helm is used to install the example-voting-app into different Kubernetes namespaces (== environments).
 
-## requirements
+## Requirements
 - [minikube](https://github.com/kubernetes/minikube/releases)
 - kubectl
 - [helm](https://github.com/kubernetes/helm/releases)
@@ -52,7 +56,7 @@ After a while you can access gitlab at `http://$(minikube ip):30080`. Default us
 
 Got to `http://$(minikube ip):30080/admin/runners` and copy the registration token. Then register the gitlab-runner manually, because that's just the way it is:
 ```
-kubectl run --namespace=infra gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never -- register -n --executor kubernetes -u http://gitlab:30080/ -r p2ds1dyigYJfS7J2-esA
+kubectl run --namespace=infra gitlab-runner --image=gitlab/gitlab-runner:alpine-v1.7.1 --restart=Never -- register -n --executor kubernetes -u http://gitlab:30080/ -r Gq2_NEeKKcz7-7CwrZxW
 ```
 Go back to admin console, grap the token for the runner and paste it in `charts/gitlab-runner/values.yaml`. Then install the (long-running) gitlab-runner:
 ```
