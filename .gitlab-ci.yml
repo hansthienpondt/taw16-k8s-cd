@@ -89,7 +89,7 @@ e2e-test:
     - while ! pg_isready -h db.$NS_UUID.svc; do echo "waiting for postgres" && sleep 5; done
     - while ! curl -s -o /dev/null http://voting-app.$NS_UUID.svc; do echo "waiting for voting-app" && sleep 5; done
     - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
-    - sleep 10s
+    - sleep 5s
     - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
     - sleep 30s
     - phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc
