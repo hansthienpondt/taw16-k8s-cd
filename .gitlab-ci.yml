@@ -6,7 +6,7 @@ stages:
   - deploy-canary
   - deploy-prod
 
-## testing section
+## testing sections
 lint-voting-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
   stage: unit-test
