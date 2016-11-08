@@ -32,27 +32,27 @@ lint-result-chart:
     - helm lint charts/example-voting-app/charts/result-app
 
 ### building section
-# build-voting-container:
-#   image: gitlab/dind
-#   stage: build-push
-#   variables:
-#     DOCKER_API_VERSION: "1.23"
-#   script:
-#     - docker build -t willies/example-voting-app-vote:latest example-voting-app/vote/
-#     - docker tag willies/example-voting-app-vote:latest willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-#     - docker push willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-#     - docker push willies/example-voting-app-vote:latest
-#
-# build-result-container:
-#   image: gitlab/dind
-#   stage: build-push
-#   variables:
-#     DOCKER_API_VERSION: "1.23"
-#   script:
-#     - docker build -t willies/example-voting-app-result:latest example-voting-app/result/
-#     - docker tag willies/example-voting-app-result:latest willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-#     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-#     - docker push willies/example-voting-app-result:latest
+build-voting-container:
+  image: gitlab/dind
+  stage: build-push
+  variables:
+    DOCKER_API_VERSION: "1.23"
+  script:
+    - docker build -t willies/example-voting-app-vote:latest example-voting-app/vote/
+    - docker tag willies/example-voting-app-vote:latest willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-vote:latest
+
+build-result-container:
+  image: gitlab/dind
+  stage: build-push
+  variables:
+    DOCKER_API_VERSION: "1.23"
+  script:
+    - docker build -t willies/example-voting-app-result:latest example-voting-app/result/
+    - docker tag willies/example-voting-app-result:latest willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+    - docker push willies/example-voting-app-result:latest
 #
 # build-worker-container:
 #   image: gitlab/dind
