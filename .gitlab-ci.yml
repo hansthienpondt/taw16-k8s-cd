@@ -113,7 +113,6 @@ deploy canary production:
   variables:
     KUBECONFIG: "/root/.kube/config-aws"
   script:
-    - sleep 300s
     - kubectl set image deployments/voting-app-beta voting-app-beta=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
     - kubectl scale --replicas 1 deployment voting-app-beta
 
