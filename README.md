@@ -2,11 +2,18 @@
 # Overview
 I took the docker example-voting-app and added some kubernetes, helm and gitlab love.
 
+The example-voting-app will go through a CI/CD pipeline which is implemented with gitlab-ci autoscaled builders. It will run parallel linting tests, build and push the docker containers, deploy to development environment- then run end-2-end tests with phantomjs. If that succeeds the pipeline will automatically deploy a canary version to a production cluster on AWS. In the end the user is left with a manual step to fully deploy to production.
+
+The pipeline looks like this:
+
+Take a look at `.gitlab-ci.yaml` on how stages are defined.
+
 Helm is used to install the example-voting-app into different Kubernetes namespaces (== environments).
 
 ## requirements
-- minikube
+- [minikube](https://github.com/kubernetes/minikube/releases)
 - kubectl
+- [helm](https://github.com/kubernetes/helm/releases)
 
 ## Get started
 Start minikube
@@ -68,7 +75,21 @@ bash-4.3# grep token /etc/gitlab-runner/config.toml
   token = "33231c882cf2545e3124a823dee982"
 ```
 
+## run canary deployment
+```
+kubectl run voting-app-beta --image=willies/example-voting-app-vote -l app=voting-app,release=canary
+
+```
+## provision uat
+```
+helm install --namespace=uat --name postgres-uat charts/example-voting-app/charts/postgres
+helm install --namespace=uat --name redis-uat charts/example-voting-app/charts/redis
+helm install --namespace=uat --name worker-uat charts/example-voting-app/charts/worker
+helm install --namespace=uat --name voting-app-uat charts/example-voting-app/charts/voting-app --set nodePort=30060
+helm install --namespace=uat --name result-app-uat charts/example-voting-app/charts/result-app --set nodePort=30061
+```
 ## build gitlab-runner
+I hacked in support to use `/var/run/docker.sock` from the host and two secretes `docker-cred` and `kube-cred` to store the credentials to dockerhub and production k8s cluster. Source is available here:
 ```
 make build BUILD_PLATFORMS="-os=linux -arch=amd64"
 ```
@@ -82,17 +103,10 @@ docker push willies/gitlab-runner:1.7.1_kube.3
 cd -
 ```
 
-## build kubectl
-```
-docker build -t willies/kubectl:1.4.5-2 .
-docker push willies/kubectl:1.4.5-2
-```
+## docker on mac issues
+if you have trouble starting minikube, try to rerun instructions from [docker-machine-driver-xhyve](https://github.com/zchee/docker-machine-driver-xhyve#install)
 
-## provision uat
 ```
-helm install --namespace=uat --name postgres-uat charts/example-voting-app/charts/postgres
-helm install --namespace=uat --name redis-uat charts/example-voting-app/charts/redis
-helm install --namespace=uat --name worker-uat charts/example-voting-app/charts/worker
-helm install --namespace=uat --name voting-app-uat charts/example-voting-app/charts/voting-app --set nodePort=30060
-helm install --namespace=uat --name result-app-uat charts/example-voting-app/charts/result-app --set nodePort=30061
+sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
+sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
 ```
