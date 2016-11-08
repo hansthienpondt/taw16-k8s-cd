@@ -32,99 +32,99 @@ lint-result-chart:
     - helm lint charts/example-voting-app/charts/result-app
 
 ### building section
-build-voting-container:
-  image: gitlab/dind
-  stage: build-push
-  variables:
-    DOCKER_API_VERSION: "1.23"
-  script:
-    - docker build -t willies/example-voting-app-vote:latest example-voting-app/vote/
-    - docker tag willies/example-voting-app-vote:latest willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-vote:latest
-
-build-result-container:
-  image: gitlab/dind
-  stage: build-push
-  variables:
-    DOCKER_API_VERSION: "1.23"
-  script:
-    - docker build -t willies/example-voting-app-result:latest example-voting-app/result/
-    - docker tag willies/example-voting-app-result:latest willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-result:latest
-
-build-worker-container:
-  image: gitlab/dind
-  stage: build-push
-  variables:
-    DOCKER_API_VERSION: "1.23"
-  script:
-    - docker build -t willies/example-voting-app-worker:latest example-voting-app/worker/
-    - docker tag willies/example-voting-app-worker:latest willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
-    - docker push willies/example-voting-app-worker:latest
-
-### deploy to dev
-deploy-to-dev:
-  image: willies/helm:2.0.0-beta.2
-  stage: deploy-dev
-  environment: dev
-  script:
-    - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
-    - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
-
-### e2e test
-# generate unique namespace
-# deploy application stack into it
-# wait until everything is ready (it's still racy)
-# run test & check result
-# delete namespace (includes app-stack)
-e2e-test:
-  image: willies/phantomjs:6
-  stage: e2e-test
-  script:
-    - export NS_UUID=$(uuidgen | cut -f1 -d-)
-    - helm install --namespace=$NS_UUID charts/example-voting-app/ --set voting-app.imageTag=${CI_BUILD_REF:0:8},result-app.imageTag=${CI_BUILD_REF:0:8}
-    - while ! pg_isready -h db.$NS_UUID.svc; do echo "waiting for postgres" && sleep 5; done
-    - while ! curl -s -o /dev/null http://voting-app.$NS_UUID.svc; do echo "waiting for voting-app" && sleep 5; done
-    - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
-    - sleep 5s
-    - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
-    - sleep 120s
-    - phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc
-    - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
-    - kubectl delete ns $NS_UUID
-
-### deploy to uat
-# deploy-to-uat:
-#   image: willies/helm:2.0.0-beta.2
-#   stage: deploy-uat
-#   environment: uat
+# build-voting-container:
+#   image: gitlab/dind
+#   stage: build-push
+#   variables:
+#     DOCKER_API_VERSION: "1.23"
 #   script:
-#     - helm upgrade voting-app-uat charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
-#     - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
-
-### canary deploy to prod
-deploy canary production:
-  image: willies/kubectl:1.4.5-5
-  stage: deploy-canary
-  environment: prod
-  variables:
-    KUBECONFIG: "/root/.kube/config-aws"
-  script:
-    - kubectl set image deployments/voting-app-beta voting-app-beta=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-    - kubectl scale --replicas 1 deployment voting-app-beta
-
-### deploy to prod
-deploy to production:
-  image: willies/kubectl:1.4.5-5
-  stage: deploy-prod
-  environment: prod
-  when: manual
-  variables:
-    KUBECONFIG: "/root/.kube/config-aws"
-  script:
-    - kubectl set image deployments/voting-app voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-    - kubectl set image deployments/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
-    - kubectl scale --replicas 0 deployment voting-app-beta
+#     - docker build -t willies/example-voting-app-vote:latest example-voting-app/vote/
+#     - docker tag willies/example-voting-app-vote:latest willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-vote:latest
+#
+# build-result-container:
+#   image: gitlab/dind
+#   stage: build-push
+#   variables:
+#     DOCKER_API_VERSION: "1.23"
+#   script:
+#     - docker build -t willies/example-voting-app-result:latest example-voting-app/result/
+#     - docker tag willies/example-voting-app-result:latest willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-result:latest
+#
+# build-worker-container:
+#   image: gitlab/dind
+#   stage: build-push
+#   variables:
+#     DOCKER_API_VERSION: "1.23"
+#   script:
+#     - docker build -t willies/example-voting-app-worker:latest example-voting-app/worker/
+#     - docker tag willies/example-voting-app-worker:latest willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-worker:${CI_BUILD_REF:0:8}
+#     - docker push willies/example-voting-app-worker:latest
+#
+# ### deploy to dev
+# deploy-to-dev:
+#   image: willies/helm:2.0.0-beta.2
+#   stage: deploy-dev
+#   environment: dev
+#   script:
+#     - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
+#     - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
+#
+# ### e2e test
+# # generate unique namespace
+# # deploy application stack into it
+# # wait until everything is ready (it's still racy)
+# # run test & check result
+# # delete namespace (includes app-stack)
+# e2e-test:
+#   image: willies/phantomjs:6
+#   stage: e2e-test
+#   script:
+#     - export NS_UUID=$(uuidgen | cut -f1 -d-)
+#     - helm install --namespace=$NS_UUID charts/example-voting-app/ --set voting-app.imageTag=${CI_BUILD_REF:0:8},result-app.imageTag=${CI_BUILD_REF:0:8}
+#     - while ! pg_isready -h db.$NS_UUID.svc; do echo "waiting for postgres" && sleep 5; done
+#     - while ! curl -s -o /dev/null http://voting-app.$NS_UUID.svc; do echo "waiting for voting-app" && sleep 5; done
+#     - while ! curl -s -o /dev/null http://result-app.$NS_UUID.svc; do echo "waiting for result-app" && sleep 5; done
+#     - sleep 5s
+#     - curl -sS -X POST --data "vote=b" http://voting-app.$NS_UUID.svc > /dev/null
+#     - sleep 120s
+#     - phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc
+#     - if ! phantomjs example-voting-app/result/tests/render.js http://result-app.$NS_UUID.svc | grep '1 vote'; then kubectl delete ns $NS_UUID && exit 1; fi
+#     - kubectl delete ns $NS_UUID
+#
+# ### deploy to uat
+# # deploy-to-uat:
+# #   image: willies/helm:2.0.0-beta.2
+# #   stage: deploy-uat
+# #   environment: uat
+# #   script:
+# #     - helm upgrade voting-app-uat charts/example-voting-app/charts/voting-app -i --set nodePort=30060,imageTag=${CI_BUILD_REF:0:8}
+# #     - helm upgrade result-app-uat charts/example-voting-app/charts/result-app -i --set nodePort=30061,imageTag=${CI_BUILD_REF:0:8}
+#
+# ### canary deploy to prod
+# deploy canary production:
+#   image: willies/kubectl:1.4.5-5
+#   stage: deploy-canary
+#   environment: prod
+#   variables:
+#     KUBECONFIG: "/root/.kube/config-aws"
+#   script:
+#     - kubectl set image deployments/voting-app-beta voting-app-beta=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+#     - kubectl scale --replicas 1 deployment voting-app-beta
+#
+# ### deploy to prod
+# deploy to production:
+#   image: willies/kubectl:1.4.5-5
+#   stage: deploy-prod
+#   environment: prod
+#   when: manual
+#   variables:
+#     KUBECONFIG: "/root/.kube/config-aws"
+#   script:
+#     - kubectl set image deployments/voting-app voting-app=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+#     - kubectl set image deployments/result-app result-app=willies/example-voting-app-result:${CI_BUILD_REF:0:8}
+#     - kubectl scale --replicas 0 deployment voting-app-beta
