@@ -70,6 +70,27 @@ git remote add local http://$(minikube ip):30080/root/taw16.git
 git push -u local master
 ```
 
+If you want to push images to your dockerhub account, create `charts/gitlab-runner/templates/secret-docker-cred.yaml` with the following:
+```
+apiVersion: v1
+data:
+  config.json: <insert output of $(base64 ~/.docker/config.json) here>
+kind: Secret
+metadata:
+  name: docker-cred
+type: Opaque
+```
+If you want to push images to a different kubernetes cluster, create `charts/gitlab-runner/templates/secret-kube-cred.yaml` with the following:
+```
+apiVersion: v1
+data:
+  config-aws: <insert output of $(base64 ~/.kube/config) here>
+kind: Secret
+metadata:
+  name: kube-cred
+type: Opaque
+```
+make sure that only your aws credentials are in there, because kubernetes secrets have a size limit.
 ## Notes
 [1] Or do
 ```
