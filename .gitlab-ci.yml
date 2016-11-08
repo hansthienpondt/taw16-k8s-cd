@@ -107,14 +107,14 @@ e2e-test:
 #
 # ### canary deploy to prod
 # deploy canary production:
-#   image: willies/kubectl:1.4.5-5
-#   stage: deploy-canary
-#   environment: prod
-#   variables:
-#     KUBECONFIG: "/root/.kube/config-aws"
-#   script:
-#     - kubectl set image deployments/voting-app-beta voting-app-beta=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
-#     - kubectl scale --replicas 1 deployment voting-app-beta
+  image: willies/kubectl:1.4.5-5
+  stage: deploy-canary
+  environment: prod
+  variables:
+    KUBECONFIG: "/root/.kube/config-aws"
+  script:
+    - kubectl set image deployments/voting-app-beta voting-app-beta=willies/example-voting-app-vote:${CI_BUILD_REF:0:8}
+    - kubectl scale --replicas 1 deployment voting-app-beta
 #
 # ### deploy to prod
 # deploy to production:
