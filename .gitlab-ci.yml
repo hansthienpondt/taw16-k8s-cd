@@ -66,14 +66,14 @@ build-result-container:
 #     - docker push willies/example-voting-app-worker:latest
 #
 # ### deploy to dev
-# deploy-to-dev:
-#   image: willies/helm:2.0.0-beta.2
-#   stage: deploy-dev
-#   environment: dev
-#   script:
-#     - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
-#     - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
-#
+deploy-to-dev:
+  image: willies/helm:2.0.0-beta.2
+  stage: deploy-dev
+  environment: dev
+  script:
+    - helm upgrade --namespace=dev voting-app charts/example-voting-app/charts/voting-app --set nodePort=30050,imageTag=${CI_BUILD_REF:0:8}
+    - helm upgrade --namespace=dev result-app charts/example-voting-app/charts/result-app --set nodePort=30051,imageTag=${CI_BUILD_REF:0:8}
+
 # ### e2e test
 # # generate unique namespace
 # # deploy application stack into it
