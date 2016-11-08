@@ -6,7 +6,8 @@
 image: willies/gitlab-runner:1.7.1_kube.3
 
 # not the registration token, but the result from the registration
-token: 067ee3cf75b73d8d1b3b07ca2c996e
+# $(minikube ip):30080/admin/runners/1
+token: 8c993895a40825c58e55f2e4ff4a50
 
 # doesn't quite work yet, register the runner manually
 # gitlab-ci-multi-runner register
