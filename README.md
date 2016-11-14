@@ -114,7 +114,7 @@ helm install --namespace=uat --name voting-app-uat charts/example-voting-app/cha
 helm install --namespace=uat --name result-app-uat charts/example-voting-app/charts/result-app --set nodePort=30061
 ```
 ### build gitlab-runner
-I hacked in support to use `/var/run/docker.sock` from the host and two secretes `docker-cred` and `kube-cred` to store the credentials to dockerhub and production k8s cluster. Source is available here: [janwillies/gitlab-runner](https://github.com/janwillies/gitlab-runner)
+I hacked in support to use `/var/run/docker.sock` from the host and two secretes `docker-cred` and `kube-cred` to store the credentials to dockerhub and production k8s cluster. Source is available here: [janwillies/gitlab-runner](https://github.com/janwillies/gitlab-runner), corresponding issue for gitlab-ci: https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/issues/1876
 ```
 make build BUILD_PLATFORMS="-os=linux -arch=amd64"
 ```
