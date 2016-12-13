@@ -11,7 +11,7 @@ test-versions:
   image: willies/serverspec:latest
   stage: unit-test
   script:
-    - rake spec:localhost
+    - rake -f /serverspec/Rakefile
 
 lint-voting-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
