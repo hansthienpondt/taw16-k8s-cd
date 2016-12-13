@@ -7,6 +7,12 @@ stages:
   - deploy-prod
 
 ## testing sections
+test-versions:
+  image: willies/serverspec:latest
+  stage: unit-test
+  script:
+    - rake spec:localhost
+
 lint-voting-dockerfile:
   image: willies/dockerfile_lint:a36b300_git.0
   stage: unit-test
